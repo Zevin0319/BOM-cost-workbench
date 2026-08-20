@@ -1662,7 +1662,7 @@
       <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:16px;margin-bottom:20px;">
         <div class="form-group" style="margin-bottom:0;">
           <label>季度计划报废率（%）</label>
-          <input type="number" class="input" id="scrapPlanRate" min="0" step="0.01" placeholder="例如：0.50"
+          <input type="number" class="input" id="scrapPlanRate" min="0" step="0.01" placeholder="例如：8.56"
             oninput="calculateScrapAllowance()" onchange="saveScrapInputs()">
         </div>
         <div class="form-group" style="margin-bottom:0;">
@@ -1976,7 +1976,7 @@ let state = {
   parts: [],       // 物料成本库
   models: [],      // 型号BOM列表
   scrapQuarter: {  // 当前季度报废额度测算
-    planRate: 0,
+    planRate: 8.56,
     outputAmount: 0,
     usedAmount: 0,
     amountCurrency: 'USD',
@@ -5557,7 +5557,7 @@ function readScrapInputs() {
 
 function initScrapCalculator() {
   if (!state.scrapQuarter) {
-    state.scrapQuarter = { planRate: 0, outputAmount: 0, usedAmount: 0, amountCurrency: 'USD', productPn: '', productQty: 0, productUnitPrice: 0, productPriceSource: '' };
+    state.scrapQuarter = { planRate: 8.56, outputAmount: 0, usedAmount: 0, amountCurrency: 'USD', productPn: '', productQty: 0, productUnitPrice: 0, productPriceSource: '' };
   } else if (!state.scrapQuarter.amountCurrency) {
     // 兼容旧版：旧数据按 CNY 保存，首次打开时自动换算为 USD。
     state.scrapQuarter.outputAmount = (Number(state.scrapQuarter.outputAmount) || 0) / getUsdRate();
@@ -5565,8 +5565,12 @@ function initScrapCalculator() {
     state.scrapQuarter.amountCurrency = 'USD';
     saveState();
   }
+  if (state.scrapQuarter.planRate === undefined || state.scrapQuarter.planRate === null || state.scrapQuarter.planRate === '') {
+    state.scrapQuarter.planRate = 8.56;
+    saveState();
+  }
   document.getElementById('scrapQuarterLabel').textContent = getCurrentQuarterLabel();
-  document.getElementById('scrapPlanRate').value = state.scrapQuarter.planRate || '';
+  document.getElementById('scrapPlanRate').value = state.scrapQuarter.planRate;
   document.getElementById('scrapOutputAmount').value = state.scrapQuarter.outputAmount || '';
   document.getElementById('scrapUsedAmount').value = state.scrapQuarter.usedAmount || '';
   document.getElementById('scrapProductPn').value = state.scrapQuarter.productPn || '';
